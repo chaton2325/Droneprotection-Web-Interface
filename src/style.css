@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #0b0f19;
+  --color-surface: #121826;
+  --color-surface-2: #1a2333;
+  --color-border: #26314a;
+
+  --color-brand-50: #fff1f1;
+  --color-brand-400: #ff6b6b;
+  --color-brand-500: #ef4444;
+  --color-brand-600: #dc2626;
+  --color-brand-700: #b91c1c;
+
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+
+  --color-ok-400: #4ade80;
+  --color-ok-500: #22c55e;
+
+  --color-warn-400: #fbbf24;
+  --color-warn-500: #f59e0b;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #131a2b 0%, var(--color-bg) 55%);
+  color: #e6e9f2;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-brand-500);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-2);
+  border-radius: 999px;
+  border: 2px solid var(--color-bg);
+}
+
+.leaflet-container {
+  background: #0e1524 !important;
+  font-family: var(--font-sans);
+}
+
+/* Rendu sombre applique uniquement aux tuiles OpenStreetMap (gratuites, sans
+   cle API) : on inverse puis re-teinte les couleurs. Les marqueurs, popups et
+   le trace d'itineraire vivent dans d'autres panes Leaflet et restent nets. */
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(200deg) brightness(0.95) contrast(0.9) saturate(0.5);
+}
+
+.leaflet-control-attribution {
+  background: rgba(18, 24, 38, 0.85) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+}
+.leaflet-control-attribution a {
+  color: #38bdf8 !important;
+}
+.leaflet-control-zoom a {
+  background: var(--color-surface) !important;
+  color: #e6e9f2 !important;
+  border-color: var(--color-border) !important;
+}
+.leaflet-control-zoom a:hover {
+  background: var(--color-surface-2) !important;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: currentColor;
+  animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+/* Theme sombre pour le panneau d'itineraire de Leaflet Routing Machine (OSRM). */
+.leaflet-routing-container {
+  background: var(--color-surface) !important;
+  color: #e6e9f2 !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  font-family: var(--font-sans) !important;
+  max-height: 45%;
+  overflow-y: auto;
+}
+.leaflet-routing-alt {
+  background: transparent !important;
+  color: #e6e9f2 !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+.leaflet-routing-alt h2,
+.leaflet-routing-alt h3 {
+  color: #ffffff !important;
+}
+.leaflet-routing-alt tr:hover {
+  background: var(--color-surface-2) !important;
+}
+.leaflet-routing-icon {
+  filter: invert(1) brightness(1.6);
+}
+/* Les champs de recherche de depart/arrivee sont masques : aucun geocoder
+   n'est attache, le trajet est fixe par la position du repondant et de l'alerte. */
+.leaflet-routing-geocoders {
+  display: none !important;
+}
+.leaflet-routing-container .leaflet-bar,
+.leaflet-routing-container a.leaflet-routing-collapse-btn {
+  background: var(--color-surface-2) !important;
+  color: #e6e9f2 !important;
+  border-color: var(--color-border) !important;
+}
