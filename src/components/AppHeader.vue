@@ -25,6 +25,10 @@ const links = [
   { to: '/', label: 'Tableau de bord', name: 'dashboard' },
   { to: '/historique', label: 'Historique', name: 'history' },
 ]
+
+const adminLinks = [
+  { to: '/admin', label: 'Administration', name: 'admin-dashboard' },
+]
 </script>
 
 <template>
@@ -71,6 +75,20 @@ const links = [
           >
             {{ pendingCount }}
           </span>
+        </router-link>
+        <router-link
+          v-if="auth.user?.role === 'admin'"
+          v-for="link in adminLinks"
+          :key="link.name"
+          :to="link.to"
+          class="relative px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="
+            route.name === link.name
+              ? 'text-white bg-white/5'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+          "
+        >
+          {{ link.label }}
         </router-link>
       </nav>
 

@@ -20,6 +20,12 @@ const routes = [
     component: () => import('../views/DashboardView.vue'),
   },
   {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: () => import('../views/AdminDashboardView.vue'),
+    meta: { admin: true },
+  },
+  {
     path: '/alertes/:id',
     name: 'alert-detail',
     component: () => import('../views/AlertDetailView.vue'),
@@ -47,6 +53,9 @@ router.beforeEach((to) => {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
   if (to.meta.public && auth.isAuthenticated) {
+    return { name: 'dashboard' }
+  }
+  if (to.meta.admin && auth.user?.role !== 'admin') {
     return { name: 'dashboard' }
   }
   return true
