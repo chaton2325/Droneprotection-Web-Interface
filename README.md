@@ -27,8 +27,7 @@ cp .env.example .env   # ajuster VITE_API_URL / VITE_SOCKET_URL si besoin
 npm run dev
 ```
 
-Le backend ([Droneprotection-Backend](../Droneprotection-Backend)) doit tourner sur
-`http://localhost:4000` (ou l'URL configuree dans `.env`).
+Le backend doit tourner sur `https://antitheft.mirhosty.com` (ou l'URL configuree dans `.env`).
 
 ## Stack
 
