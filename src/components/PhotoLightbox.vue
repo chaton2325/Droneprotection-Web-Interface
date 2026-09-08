@@ -9,7 +9,7 @@ const emit = defineEmits(['close'])
   <Teleport to="body">
     <div
       v-if="src"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
+      class="fixed inset-0 z-[2000] flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
       @click="emit('close')"
     >
       <button
