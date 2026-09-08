@@ -19,6 +19,9 @@ export const useAlertsStore = defineStore('alerts', {
     loading: false,
     error: null,
     lastEvent: null,
+    // Alertes "pending" que le repondant a deja cliquees/ouvertes : la
+    // sirene et le clignotement captivant s'arretent pour celles-ci.
+    acknowledgedIds: new Set(),
     _boundSocket: null,
   }),
   getters: {
@@ -76,9 +79,14 @@ export const useAlertsStore = defineStore('alerts', {
       }
     },
 
+    acknowledge(id) {
+      this.acknowledgedIds.add(id)
+    },
+
     async accept(id) {
       const { data } = await api.post(`/alerts/${id}/accept`)
       upsert(this.alerts, data.alert)
+      this.acknowledgedIds.add(id)
       if (this.current?.id === data.alert.id) this.current = data.alert
       return data.alert
     },

@@ -117,6 +117,41 @@ h3,
   animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
 }
 
+/* Clignotement captivant pour une alerte pending non encore ouverte par le
+   repondant : flash de fond + halo, nettement plus visible que le simple
+   point qui pulse du StatusBadge. */
+@keyframes alert-flash {
+  0%,
+  100% {
+    background-color: rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+    border-color: rgba(239, 68, 68, 0.35);
+  }
+  50% {
+    background-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    border-color: rgba(239, 68, 68, 0.8);
+  }
+}
+.alert-flash {
+  animation: alert-flash 1s ease-in-out infinite;
+}
+
+/* Banniere sirene plein-ecran (AlertSiren.vue) tant qu'une alerte n'est pas
+   ouverte par le repondant. */
+@keyframes siren-banner-flash {
+  0%,
+  100% {
+    background-color: #dc2626;
+  }
+  50% {
+    background-color: #7f1d1d;
+  }
+}
+.siren-banner {
+  animation: siren-banner-flash 1s step-start infinite;
+}
+
 /* Theme sombre pour le panneau d'itineraire de Leaflet Routing Machine (OSRM). */
 .leaflet-routing-container {
   background: var(--color-surface) !important;

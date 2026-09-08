@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import AppHeader from './components/AppHeader.vue'
+import AlertSiren from './components/AlertSiren.vue'
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -12,6 +13,7 @@ const showChrome = computed(() => !route.meta.public && auth.isAuthenticated)
 
 <template>
   <div class="min-h-full flex flex-col">
+    <AlertSiren v-if="showChrome" />
     <AppHeader v-if="showChrome" />
     <main class="flex-1 flex flex-col">
       <router-view v-slot="{ Component }">

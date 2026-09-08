@@ -1,17 +1,31 @@
 <script setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, onBeforeUnmount, computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useAlertsStore } from '../stores/alerts'
+import { avatarSrc } from '../services/api'
 
 const auth = useAuthStore()
 const alerts = useAlertsStore()
 const router = useRouter()
 const route = useRoute()
 
+const profileMenuRoot = ref(null)
+
+function onDocumentClick(event) {
+  if (showProfileMenu.value && !profileMenuRoot.value?.contains(event.target)) {
+    showProfileMenu.value = false
+  }
+}
+
 onMounted(() => {
   alerts.bindSocket()
   alerts.fetchActive()
+  document.addEventListener('click', onDocumentClick)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocumentClick)
 })
 
 const pendingCount = computed(() => alerts.pending.length)
@@ -19,6 +33,44 @@ const pendingCount = computed(() => alerts.pending.length)
 function logout() {
   auth.logout()
   router.push({ name: 'login' })
+}
+
+const showProfileMenu = ref(false)
+const fileInput = ref(null)
+const avatarBusy = ref(false)
+const avatarError = ref('')
+
+function pickAvatarFile() {
+  avatarError.value = ''
+  fileInput.value?.click()
+}
+
+async function onAvatarFileChange(event) {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+
+  avatarBusy.value = true
+  avatarError.value = ''
+  try {
+    await auth.uploadAvatar(file)
+  } catch (err) {
+    avatarError.value = err.message
+  } finally {
+    avatarBusy.value = false
+  }
+}
+
+async function clearAvatar() {
+  avatarBusy.value = true
+  avatarError.value = ''
+  try {
+    await auth.removeAvatar()
+  } catch (err) {
+    avatarError.value = err.message
+  } finally {
+    avatarBusy.value = false
+  }
 }
 
 const links = [
@@ -97,11 +149,72 @@ const adminLinks = [
           <p class="text-sm font-semibold text-white">{{ auth.user?.full_name }}</p>
           <p class="text-[11px] text-slate-400 capitalize">{{ auth.user?.role }}</p>
         </div>
-        <div
-          class="h-9 w-9 rounded-full bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-sm border border-accent-500/30"
-        >
-          {{ auth.user?.full_name?.[0]?.toUpperCase() || '?' }}
+
+        <div ref="profileMenuRoot" class="relative">
+          <button
+            type="button"
+            title="Photo de profil"
+            class="h-9 w-9 rounded-full overflow-hidden bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-sm border border-accent-500/30 hover:border-accent-400 transition-colors"
+            @click="showProfileMenu = !showProfileMenu"
+          >
+            <img
+              v-if="auth.user?.avatar_url"
+              :src="avatarSrc(auth.user.avatar_url)"
+              alt=""
+              class="h-full w-full object-cover"
+            />
+            <span v-else>{{ auth.user?.full_name?.[0]?.toUpperCase() || '?' }}</span>
+          </button>
+
+          <div
+            v-if="showProfileMenu"
+            class="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl z-50"
+          >
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Photo de profil</p>
+            <div class="flex items-center gap-3">
+              <div
+                class="h-14 w-14 shrink-0 rounded-full overflow-hidden bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-lg border border-accent-500/30"
+              >
+                <img
+                  v-if="auth.user?.avatar_url"
+                  :src="avatarSrc(auth.user.avatar_url)"
+                  alt=""
+                  class="h-full w-full object-cover"
+                />
+                <span v-else>{{ auth.user?.full_name?.[0]?.toUpperCase() || '?' }}</span>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button
+                  type="button"
+                  :disabled="avatarBusy"
+                  class="rounded-lg bg-gradient-to-r from-brand-500 to-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:brightness-110 disabled:opacity-60"
+                  @click="pickAvatarFile"
+                >
+                  {{ avatarBusy ? 'Envoi...' : 'Changer la photo' }}
+                </button>
+                <button
+                  v-if="auth.user?.avatar_url"
+                  type="button"
+                  :disabled="avatarBusy"
+                  class="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/5 disabled:opacity-60"
+                  @click="clearAvatar"
+                >
+                  Retirer
+                </button>
+              </div>
+            </div>
+            <p v-if="avatarError" class="mt-2 text-xs text-brand-400">{{ avatarError }}</p>
+            <p class="mt-2 text-[11px] text-slate-500">JPEG, PNG ou WEBP, 5 Mo max.</p>
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              class="hidden"
+              @change="onAvatarFileChange"
+            />
+          </div>
         </div>
+
         <button
           type="button"
           class="rounded-lg border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-slate-300 hover:bg-white/5 transition-colors"

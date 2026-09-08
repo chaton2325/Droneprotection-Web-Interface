@@ -44,6 +44,22 @@ export const useAuthStore = defineStore('auth', {
       return data.user
     },
 
+    async uploadAvatar(file) {
+      const formData = new FormData()
+      formData.append('avatar', file)
+      const { data } = await api.post('/users/me/avatar', formData)
+      this.user = data.user
+      localStorage.setItem('dp_user', JSON.stringify(data.user))
+      return data.user
+    },
+
+    async removeAvatar() {
+      const { data } = await api.delete('/users/me/avatar')
+      this.user = data.user
+      localStorage.setItem('dp_user', JSON.stringify(data.user))
+      return data.user
+    },
+
     logout() {
       this.token = null
       this.user = null
