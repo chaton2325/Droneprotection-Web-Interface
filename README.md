@@ -1,4 +1,4 @@
-# Drone Protection - Interface Web (centre d'alertes)
+# Dronaid - Interface Web (centre d'alertes)
 
 Interface web (Vue 3 + Vite + Tailwind CSS v4) destinee aux **repondants** inscrits pour
 recevoir en temps reel les alertes anti-bandit declenchees depuis l'application mobile

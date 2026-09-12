@@ -27,7 +27,7 @@ defineSlots()
             <circle cx="12" cy="16.2" r="0.9" fill="currentColor" stroke="none" />
           </svg>
         </span>
-        <span class="font-display font-bold text-white tracking-wide">DRONE PROTECTION</span>
+        <span class="font-display font-bold text-white tracking-wide">DRONAID</span>
       </div>
 
       <div class="relative z-10 max-w-md">
@@ -58,7 +58,7 @@ defineSlots()
       </div>
 
       <p class="relative z-10 text-xs text-slate-500">
-        &copy; {{ new Date().getFullYear() }} Drone Protection - reseau de vigilance citoyenne
+        &copy; {{ new Date().getFullYear() }} Dronaid - reseau de vigilance citoyenne
       </p>
     </div>
 
@@ -77,7 +77,7 @@ defineSlots()
               />
             </svg>
           </span>
-          <span class="font-display font-bold text-white">DRONE PROTECTION</span>
+          <span class="font-display font-bold text-white">DRONAID</span>
         </div>
 
         <h2 class="font-display text-2xl font-bold text-white">

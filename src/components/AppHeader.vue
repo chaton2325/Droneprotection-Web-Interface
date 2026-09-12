@@ -103,7 +103,7 @@ const adminLinks = [
           </svg>
         </span>
         <div class="leading-tight">
-          <p class="font-display font-bold text-white text-sm tracking-wide">DRONE PROTECTION</p>
+          <p class="font-display font-bold text-white text-sm tracking-wide">DRONAID</p>
           <p class="text-[11px] text-slate-400 -mt-0.5">Centre d'alertes</p>
         </div>
       </router-link>
