@@ -10,6 +10,7 @@ import PhotoLightbox from '../components/PhotoLightbox.vue'
 import { formatDateTime, timeAgo } from '../utils/time'
 import { useStaleness } from '../composables/useStaleness'
 import { useLiveAudio } from '../composables/useLiveAudio'
+import { useLiveVideo } from '../composables/useLiveVideo'
 import { avatarSrc } from '../services/api'
 
 const props = defineProps({ id: { type: [String, Number], required: true } })
@@ -85,6 +86,12 @@ function enlargePhoto(url) {
 // intervention est acceptee. Le backend ne livre ces evenements qu'au
 // repondant assigne : rien ne se passe pour les autres visiteurs de la page.
 const { active: audioActive, muted: audioMuted, toggleMute: toggleAudioMute } = useLiveAudio(Number(props.id))
+const {
+  active: videoActive,
+  dualCamera: videoDualCamera,
+  backFrameUrl,
+  frontFrameUrl,
+} = useLiveVideo(Number(props.id))
 const isAssignedResponder = computed(() => alert.value?.accepted_by === auth.user?.id)
 
 const canAccept = computed(() => {
@@ -279,6 +286,41 @@ async function run(action) {
                 {{ audioMuted ? 'Reactiver' : 'Couper' }}
               </span>
             </button>
+          </div>
+
+          <div
+            v-if="isAssignedResponder && alert.status === 'accepted'"
+            class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+          >
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Camera en direct</p>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                :class="videoActive ? 'bg-ok-500/15 text-ok-400' : 'bg-warn-500/15 text-warn-400'"
+              >
+                <span class="h-1.5 w-1.5 rounded-full" :class="videoActive ? 'bg-ok-400' : 'bg-warn-400'" />
+                {{ videoActive ? (videoDualCamera ? 'Avant + arriere' : 'Arriere uniquement') : 'En attente...' }}
+              </span>
+            </div>
+
+            <div class="mt-3 relative rounded-xl overflow-hidden bg-black aspect-video">
+              <img
+                v-if="backFrameUrl"
+                :src="backFrameUrl"
+                alt="Camera arriere de la victime"
+                class="h-full w-full object-cover"
+              />
+              <div v-else class="h-full w-full flex items-center justify-center text-xs text-slate-500">
+                En attente de l'image...
+              </div>
+
+              <div
+                v-if="frontFrameUrl"
+                class="absolute bottom-2 right-2 h-20 w-28 rounded-lg overflow-hidden border-2 border-white/70 shadow-lg"
+              >
+                <img :src="frontFrameUrl" alt="Camera avant de la victime" class="h-full w-full object-cover" />
+              </div>
+            </div>
           </div>
 
           <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
