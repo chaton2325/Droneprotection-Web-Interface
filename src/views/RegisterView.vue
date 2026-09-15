@@ -11,6 +11,8 @@ const fullName = ref('')
 const email = ref('')
 const phone = ref('')
 const password = ref('')
+const emergencyContactName = ref('')
+const emergencyContactPhone = ref('')
 const role = ref('responder')
 const loading = ref(false)
 const error = ref('')
@@ -43,6 +45,8 @@ async function onSubmit() {
       phone: phone.value || undefined,
       password: password.value,
       role: role.value,
+      emergencyContactName: emergencyContactName.value,
+      emergencyContactPhone: emergencyContactPhone.value,
     })
     router.push({ name: 'dashboard' })
   } catch (err) {
@@ -104,6 +108,29 @@ async function onSubmit() {
           placeholder="6 caracteres minimum"
           class="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5 text-white placeholder:text-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition"
         />
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-300">Contact d'urgence</label>
+        <p class="mb-2 text-xs text-slate-500">
+          Une personne a prevenir en cas d'urgence. Visible par le repondant qui prend en charge votre alerte.
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          <input
+            v-model="emergencyContactName"
+            type="text"
+            required
+            placeholder="Nom du contact"
+            class="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5 text-white placeholder:text-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition"
+          />
+          <input
+            v-model="emergencyContactPhone"
+            type="tel"
+            required
+            placeholder="Telephone du contact"
+            class="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5 text-white placeholder:text-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition"
+          />
+        </div>
       </div>
 
       <div>

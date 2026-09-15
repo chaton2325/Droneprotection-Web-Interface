@@ -114,7 +114,9 @@ function enlargePhoto(url) {
         {{ alert.message }}
       </p>
 
-      <p v-if="alert.latitude != null" class="mt-2 text-xs text-slate-500 font-mono">
+      <p v-if="alert.location_name" class="mt-2 text-xs text-slate-300">{{ alert.location_name }}</p>
+
+      <p v-if="alert.latitude != null" class="mt-1 text-xs text-slate-500 font-mono">
         {{ alert.latitude.toFixed(4) }}, {{ alert.longitude.toFixed(4) }}
         <span v-if="alert.accuracy"> - precision {{ Math.round(alert.accuracy) }} m</span>
       </p>

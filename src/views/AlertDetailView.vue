@@ -7,6 +7,7 @@ import { getSocket } from '../services/socket'
 import StatusBadge from '../components/StatusBadge.vue'
 import MapView from '../components/MapView.vue'
 import PhotoLightbox from '../components/PhotoLightbox.vue'
+import ChatPanel from '../components/ChatPanel.vue'
 import { formatDateTime, timeAgo } from '../utils/time'
 import { useStaleness } from '../composables/useStaleness'
 import { useLiveAudio } from '../composables/useLiveAudio'
@@ -160,6 +161,13 @@ async function run(action) {
               - derniere position {{ timeAgo(alert.updated_at) }}
             </span>
           </p>
+          <p v-if="alert.location_name" class="mt-1 flex items-center gap-1.5 text-sm text-slate-300">
+            <svg viewBox="0 0 24 24" class="h-4 w-4 text-accent-400" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4.5-4.5-7-8-7-11a7 7 0 1 1 14 0c0 3-2.5 6.5-7 11Z" />
+              <circle cx="12" cy="10" r="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            {{ alert.location_name }}
+          </p>
         </div>
 
         <div class="flex gap-2">
@@ -227,6 +235,18 @@ async function run(action) {
               </div>
             </div>
             <p v-if="alert.message" class="mt-3 text-sm text-slate-300 leading-relaxed">{{ alert.message }}</p>
+
+            <div v-if="alert.emergency_contact_name" class="mt-3 border-t border-[var(--color-border)] pt-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contact d'urgence</p>
+              <p class="mt-1 text-sm font-medium text-white">{{ alert.emergency_contact_name }}</p>
+              <a
+                v-if="alert.emergency_contact_phone"
+                :href="`tel:${alert.emergency_contact_phone}`"
+                class="text-sm text-accent-400 hover:text-accent-300"
+              >
+                {{ alert.emergency_contact_phone }}
+              </a>
+            </div>
           </div>
 
           <div
@@ -322,6 +342,8 @@ async function run(action) {
               </div>
             </div>
           </div>
+
+          <ChatPanel v-if="isAssignedResponder && alert.status === 'accepted'" :alert-id="Number(alert.id)" />
 
           <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
             <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
