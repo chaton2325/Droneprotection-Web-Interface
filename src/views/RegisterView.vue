@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import AuthLayout from '../components/AuthLayout.vue'
+import api from '../services/api'
 
 const auth = useAuthStore()
 const router = useRouter()
 
 const fullName = ref('')
+const username = ref('')
 const email = ref('')
 const phone = ref('')
 const password = ref('')
@@ -16,6 +18,40 @@ const emergencyContactPhone = ref('')
 const role = ref('responder')
 const loading = ref(false)
 const error = ref('')
+
+// Verification de disponibilite en direct, pendant la saisie - avant que le
+// reste du formulaire soit rempli (comme cote app mobile) plutot que de
+// decouvrir "nom deja pris" seulement a la soumission.
+const usernamePattern = /^[a-z0-9_]{3,20}$/
+const checkingUsername = ref(false)
+const usernameAvailable = ref(null) // null = pas encore verifie, true/false = resultat
+let usernameDebounceTimer = null
+let usernameCheckToken = 0
+
+watch(username, (value) => {
+  usernameAvailable.value = null
+  if (usernameDebounceTimer) clearTimeout(usernameDebounceTimer)
+
+  const candidate = value.trim().toLowerCase()
+  if (!usernamePattern.test(candidate)) return
+
+  usernameDebounceTimer = setTimeout(() => checkUsername(candidate), 400)
+})
+
+async function checkUsername(candidate) {
+  const token = ++usernameCheckToken
+  checkingUsername.value = true
+  try {
+    const { data } = await api.get('/auth/check-username', { params: { username: candidate } })
+    if (token !== usernameCheckToken) return
+    usernameAvailable.value = data.available
+  } catch {
+    if (token !== usernameCheckToken) return
+    usernameAvailable.value = null
+  } finally {
+    if (token === usernameCheckToken) checkingUsername.value = false
+  }
+}
 
 const roles = [
   {
@@ -36,11 +72,13 @@ const roles = [
 ]
 
 async function onSubmit() {
+  if (usernameAvailable.value === false) return
   error.value = ''
   loading.value = true
   try {
     await auth.register({
       fullName: fullName.value,
+      username: username.value.trim().toLowerCase(),
       email: email.value,
       phone: phone.value || undefined,
       password: password.value,
@@ -74,6 +112,65 @@ async function onSubmit() {
           placeholder="Jean Dupont"
           class="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5 text-white placeholder:text-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition"
         />
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-300">Nom d'utilisateur</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">@</span>
+          <input
+            v-model="username"
+            type="text"
+            required
+            autocapitalize="off"
+            autocorrect="off"
+            placeholder="jeandupont"
+            class="w-full rounded-xl border bg-[var(--color-surface-2)] py-2.5 pl-8 pr-10 text-white placeholder:text-slate-500 outline-none focus:ring-2 transition"
+            :class="
+              usernameAvailable === false
+                ? 'border-brand-500 focus:border-brand-500 focus:ring-brand-500/30'
+                : 'border-[var(--color-border)] focus:border-brand-500 focus:ring-brand-500/30'
+            "
+          />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2">
+            <svg
+              v-if="checkingUsername"
+              class="h-4 w-4 animate-spin text-slate-500"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+            <svg
+              v-else-if="usernameAvailable === true"
+              class="h-4 w-4 text-ok-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <svg
+              v-else-if="usernameAvailable === false"
+              class="h-4 w-4 text-brand-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </span>
+        </div>
+        <p v-if="usernameAvailable === false" class="mt-1.5 text-xs text-brand-400">
+          Ce nom d'utilisateur est deja pris.
+        </p>
+        <p v-else-if="usernameAvailable === true" class="mt-1.5 text-xs text-ok-400">
+          Nom d'utilisateur disponible.
+        </p>
+        <p v-else class="mt-1.5 text-xs text-slate-500">3 a 20 caracteres : lettres, chiffres, underscore.</p>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
@@ -167,7 +264,7 @@ async function onSubmit() {
 
       <button
         type="submit"
-        :disabled="loading"
+        :disabled="loading || usernameAvailable === false"
         class="w-full rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 py-2.5 font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:brightness-110 disabled:opacity-60"
       >
         {{ loading ? 'Creation du compte...' : 'Creer mon compte' }}

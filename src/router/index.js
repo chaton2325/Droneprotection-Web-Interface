@@ -37,6 +37,12 @@ const routes = [
     component: () => import('../views/HistoryView.vue'),
   },
   {
+    path: '/localisation-en-direct',
+    name: 'live-locations',
+    component: () => import('../views/LiveLocationsView.vue'),
+    meta: { responder: true },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/',
   },
@@ -56,6 +62,9 @@ router.beforeEach((to) => {
     return { name: 'dashboard' }
   }
   if (to.meta.admin && auth.user?.role !== 'admin') {
+    return { name: 'dashboard' }
+  }
+  if (to.meta.responder && !['responder', 'both', 'admin'].includes(auth.user?.role)) {
     return { name: 'dashboard' }
   }
   return true
