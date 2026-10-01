@@ -85,9 +85,9 @@ function enlargePhoto(url) {
 
     <div class="flex-1 min-w-0 pl-2">
       <div class="flex items-start justify-between gap-3">
-        <div class="flex items-center gap-2.5 min-w-0">
+        <div class="flex items-center gap-3.5 min-w-0">
           <div
-            class="h-9 w-9 shrink-0 rounded-full overflow-hidden bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-xs border border-accent-500/30"
+            class="h-16 w-16 shrink-0 rounded-2xl overflow-hidden bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-2xl border border-accent-500/30"
             :class="{ 'cursor-pointer hover:opacity-80 transition': alert.victim_avatar_url }"
             @click.stop="enlargePhoto(alert.victim_avatar_url)"
           >
@@ -100,7 +100,7 @@ function enlargePhoto(url) {
             <span v-else>{{ alert.victim_name?.[0]?.toUpperCase() || '?' }}</span>
           </div>
           <div class="min-w-0">
-            <p class="font-semibold text-white truncate">
+            <p class="text-base font-bold text-white truncate">
               {{ alert.victim_name }}
               <span v-if="isMine" class="ml-1 text-[11px] font-normal text-accent-400">(vous)</span>
             </p>
