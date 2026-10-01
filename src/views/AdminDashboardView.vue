@@ -235,64 +235,13 @@ const stripColor = {
 </script>
 
 <template>
-  <div class="min-h-screen lg:flex">
-    <!-- Barre latérale -->
-    <aside class="lg:w-64 lg:shrink-0 lg:sticky lg:top-0 lg:h-screen flex flex-col border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[var(--color-surface)]">
-      <div class="flex items-center gap-3 px-5 py-4">
-        <div class="h-10 w-10 shrink-0 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center">
-          <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        </div>
-        <div>
-          <p class="text-lg font-bold text-white leading-tight">Dronaid</p>
-          <p class="text-xs text-slate-400">Administration</p>
-        </div>
-      </div>
+  <div class="min-h-screen">
 
-      <nav class="flex lg:flex-col gap-1 overflow-x-auto px-3 pb-3 lg:pb-0 lg:flex-1" aria-label="Sections admin">
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          @click="activeTab = tab.key"
-          :class="[
-            'flex items-center gap-3 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition',
-            activeTab === tab.key
-              ? 'bg-brand-500/15 text-white'
-              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200',
-          ]"
-        >
-          <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" :d="tab.icon" />
-          </svg>
-          <span class="flex-1 text-left">{{ tab.label }}</span>
-          <span
-            v-if="tab.badge"
-            class="rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-bold text-white animate-pulse"
-          >{{ tab.badge }}</span>
-          <span
-            v-else-if="tab.count != null"
-            class="rounded-full bg-slate-700/60 px-2 py-0.5 text-[11px] font-medium text-slate-300"
-          >{{ tab.count }}</span>
-        </button>
-      </nav>
-
-      <div class="hidden lg:flex items-center gap-3 border-t border-[var(--color-border)] p-4">
-        <div class="h-10 w-10 shrink-0 rounded-full bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold">
-          {{ initial(auth.user?.full_name) }}
-        </div>
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-semibold text-white">{{ auth.user?.full_name }}</p>
-          <button @click="auth.logout()" class="text-xs text-slate-400 hover:text-brand-400">Déconnexion</button>
-        </div>
-      </div>
-    </aside>
-
-    <div class="flex-1 min-w-0">
-    <header class="border-b border-[var(--color-border)] bg-[var(--color-bg)]/90 backdrop-blur sticky top-0 z-10">
+    <div class="min-w-0">
+    <header class="border-b border-[var(--color-border)] bg-[var(--color-bg)]/90 backdrop-blur sticky top-14 lg:top-0 z-30">
       <div class="px-4 lg:px-8 py-3 flex items-center justify-between gap-3">
         <div class="min-w-0">
-          <h1 class="text-xl font-bold text-white leading-tight">{{ tabs.find((t) => t.key === activeTab)?.label }}</h1>
+          <h1 class="text-xl font-bold text-white leading-tight">Administration</h1>
           <p class="text-xs text-slate-400 truncate">
             <template v-if="lastRefresh">Mis à jour à {{ lastRefresh.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) }}</template>
             <template v-else>Chargement…</template>
@@ -309,9 +258,23 @@ const stripColor = {
             </svg>
             <span class="hidden sm:inline">Actualiser</span>
           </button>
-          <button @click="auth.logout()" class="lg:hidden rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5">Déconnexion</button>
         </div>
       </div>
+      <nav class="flex gap-1 overflow-x-auto px-4 lg:px-8" aria-label="Sections admin">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          @click="activeTab = tab.key"
+          :class="[
+            'flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-semibold transition',
+            activeTab === tab.key ? 'border-brand-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200',
+          ]"
+        >
+          {{ tab.label }}
+          <span v-if="tab.badge" class="rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-bold text-white animate-pulse">{{ tab.badge }}</span>
+          <span v-else-if="tab.count != null" class="rounded-full bg-slate-700/60 px-2 py-0.5 text-[11px] font-medium text-slate-300">{{ tab.count }}</span>
+        </button>
+      </nav>
     </header>
 
     <main class="px-4 lg:px-8 py-6">

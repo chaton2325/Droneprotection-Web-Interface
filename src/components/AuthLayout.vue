@@ -14,18 +14,8 @@ defineSlots()
       />
 
       <div class="relative z-10 flex items-center gap-3">
-        <span
-          class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-lg shadow-brand-600/40"
-        >
-          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 2 20 6v6c0 5.5-3.4 9.9-8 11-4.6-1.1-8-5.5-8-11V6Z"
-            />
-            <path stroke-linecap="round" d="M12 8v5" />
-            <circle cx="12" cy="16.2" r="0.9" fill="currentColor" stroke="none" />
-          </svg>
+        <span class="h-14 w-14 shrink-0 overflow-hidden rounded-[22%] bg-black shadow-lg shadow-black/40">
+          <img src="/logo.png" alt="Dronaid" class="h-full w-full scale-[1.08] object-cover" />
         </span>
         <span class="font-display font-bold text-white tracking-wide">DRONAID</span>
       </div>
@@ -66,16 +56,8 @@ defineSlots()
     <div class="flex items-center justify-center p-6 sm:p-12">
       <div class="w-full max-w-sm">
         <div class="mb-8 flex items-center gap-2 lg:hidden">
-          <span
-            class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 text-white"
-          >
-            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 2 20 6v6c0 5.5-3.4 9.9-8 11-4.6-1.1-8-5.5-8-11V6Z"
-              />
-            </svg>
+          <span class="h-11 w-11 shrink-0 overflow-hidden rounded-[22%] bg-black">
+            <img src="/logo.png" alt="Dronaid" class="h-full w-full scale-[1.08] object-cover" />
           </span>
           <span class="font-display font-bold text-white">DRONAID</span>
         </div>

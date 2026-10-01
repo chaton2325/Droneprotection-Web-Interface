@@ -12,7 +12,7 @@ const showChrome = computed(() => !route.meta.public && auth.isAuthenticated)
 </script>
 
 <template>
-  <div class="min-h-full flex flex-col">
+  <div class="min-h-full flex flex-col" :class="{ 'lg:pl-64 pb-16 lg:pb-0': showChrome }">
     <AlertSiren v-if="showChrome" />
     <AppHeader v-if="showChrome" />
     <main class="flex-1 flex flex-col">
